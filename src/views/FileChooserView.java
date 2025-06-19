@@ -4,13 +4,16 @@
  */
 package views;
 
+import controller.FileController;
+
 /**
  *
  * @author lucas
  */
 public class FileChooserView extends javax.swing.JFrame {
-    
     public static FileChooserView fileChooserView;
+    
+    private final FileController fileController = FileController.getFileController();
 
     /**
      * Creates new form FileChooserView
@@ -26,7 +29,12 @@ public class FileChooserView extends javax.swing.JFrame {
         
         return fileChooserView;
     }
-
+    
+    public void screen() {
+        fileController.setjFileChooser(jFileChooser);
+        fileController.screen();
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -41,6 +49,7 @@ public class FileChooserView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Escolher um arquivo");
+        setAlwaysOnTop(true);
         setMinimumSize(new java.awt.Dimension(761, 450));
         setPreferredSize(new java.awt.Dimension(761, 450));
 

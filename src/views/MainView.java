@@ -4,7 +4,6 @@
  */
 package views;
 
-import controller.FileController;
 import controller.ResultFileController;
 import controller.TableFileController;
 
@@ -67,11 +66,16 @@ public class MainView extends javax.swing.JFrame {
      *
      */
     public void resetInteractions() {
-        
+        setTextJFileLabel("Nenhum arquivo selecionado");
     }
 
     private void chooseFile() {
         fileChooserView.setVisible(true);
+        fileChooserView.screen();
+    }
+    
+    public void setTextJFileLabel(String message) {
+        jFileLabel.setText("Caminho do arquivo: " + message);
     }
     
     /**
@@ -103,6 +107,7 @@ public class MainView extends javax.swing.JFrame {
 
         jFileButton.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jFileButton.setText("Selecionar arquivo");
+        jFileButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jFileButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jFileButtonMouseClicked(evt);
@@ -131,7 +136,13 @@ public class MainView extends javax.swing.JFrame {
 
         jCleanDataButton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jCleanDataButton.setText("Limpar dados");
+        jCleanDataButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jCleanDataButton.setPreferredSize(new java.awt.Dimension(100, 35));
+        jCleanDataButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jCleanDataButtonMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jButtonsLayout = new javax.swing.GroupLayout(jButtons);
         jButtons.setLayout(jButtonsLayout);
@@ -241,6 +252,10 @@ public class MainView extends javax.swing.JFrame {
     private void jFileButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jFileButtonMouseClicked
         chooseFile();
     }//GEN-LAST:event_jFileButtonMouseClicked
+
+    private void jCleanDataButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCleanDataButtonMouseClicked
+        resetInteractions();
+    }//GEN-LAST:event_jCleanDataButtonMouseClicked
 
     /**
      * @param args the command line arguments
