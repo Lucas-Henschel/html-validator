@@ -17,7 +17,8 @@ public class MainView extends javax.swing.JFrame {
     
     private final ResultFileController resultFileController = ResultFileController.getResultFileController();
     private final TableFileController tableFileController = TableFileController.getTableFileController();
-    private final FileController fileController = FileController.getFileController();
+    
+    private final FileChooserView fileChooserView = FileChooserView.getFileChooserView();
     
     /**
      * Creates new form MainView
@@ -47,7 +48,6 @@ public class MainView extends javax.swing.JFrame {
     public void screen() {
         initResultFileController();
         initTableFileController();
-        initFileController();
     }
     
     private void initResultFileController() {
@@ -62,11 +62,6 @@ public class MainView extends javax.swing.JFrame {
         tableFileController.screen();
     }
     
-    private void initFileController() {
-        fileController.setjFileChooser(jFileChooser);
-        fileController.screen();
-    }
-    
     /**
      * Limpa as interações antiga que teve na janela
      *
@@ -76,7 +71,7 @@ public class MainView extends javax.swing.JFrame {
     }
 
     private void chooseFile() {
-        fileController.chooseFile();
+        fileChooserView.setVisible(true);
     }
     
     /**
@@ -94,7 +89,6 @@ public class MainView extends javax.swing.JFrame {
         jFileLabel = new javax.swing.JLabel();
         jButtons = new javax.swing.JPanel();
         jCleanDataButton = new javax.swing.JButton();
-        jFileChooser = new javax.swing.JFileChooser();
         jResultPanel = new javax.swing.JPanel();
         jScrollResultPane = new javax.swing.JScrollPane();
         jResult = new javax.swing.JTextArea();
@@ -104,7 +98,8 @@ public class MainView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Validador HTML");
-        setMinimumSize(new java.awt.Dimension(798, 580));
+        setMinimumSize(new java.awt.Dimension(798, 560));
+        setPreferredSize(new java.awt.Dimension(758, 570));
 
         jFileButton.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jFileButton.setText("Selecionar arquivo");
@@ -171,9 +166,13 @@ public class MainView extends javax.swing.JFrame {
         jResultPanelLayout.setVerticalGroup(
             jResultPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultPanelLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jScrollResultPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addComponent(jScrollResultPane))
         );
+
+        jResultTablePanel.setPreferredSize(new java.awt.Dimension(698, 176));
+
+        jScrollResultTablePanel.setPreferredSize(new java.awt.Dimension(452, 176));
 
         jResultTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -189,11 +188,11 @@ public class MainView extends javax.swing.JFrame {
         jResultTablePanel.setLayout(jResultTablePanelLayout);
         jResultTablePanelLayout.setHorizontalGroup(
             jResultTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollResultTablePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 698, Short.MAX_VALUE)
+            .addComponent(jScrollResultTablePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jResultTablePanelLayout.setVerticalGroup(
             jResultTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollResultTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
+            .addComponent(jScrollResultTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout jMainLayout = new javax.swing.GroupLayout(jMain);
@@ -203,7 +202,6 @@ public class MainView extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jMainLayout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addGroup(jMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jFilePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jResultTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtons, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -217,12 +215,10 @@ public class MainView extends javax.swing.JFrame {
                 .addComponent(jFilePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20)
                 .addComponent(jButtons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
-                .addComponent(jFileChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 277, Short.MAX_VALUE)
-                .addGap(20, 20, 20)
+                .addGap(40, 40, 40)
                 .addComponent(jResultPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40)
-                .addComponent(jResultTablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jResultTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
                 .addGap(30, 30, 30))
         );
 
@@ -234,7 +230,9 @@ public class MainView extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
 
         pack();
@@ -276,7 +274,6 @@ public class MainView extends javax.swing.JFrame {
     private javax.swing.JPanel jButtons;
     private javax.swing.JButton jCleanDataButton;
     private javax.swing.JButton jFileButton;
-    private javax.swing.JFileChooser jFileChooser;
     private javax.swing.JLabel jFileLabel;
     private javax.swing.JPanel jFilePanel;
     private javax.swing.JPanel jMain;
