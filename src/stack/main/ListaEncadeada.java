@@ -7,7 +7,7 @@ public class ListaEncadeada<T> {
         primeiro = null;
     }
 
-    public NoLista getPrimeiro() {
+    public NoLista<T> getPrimeiro() {
         return primeiro;
     }
     

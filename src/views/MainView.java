@@ -67,6 +67,10 @@ public class MainView extends javax.swing.JFrame {
      */
     public void resetInteractions() {
         setTextJFileLabel("Nenhum arquivo selecionado");
+        
+        resultFileController.resetInteractions();
+        tableFileController.resetInteractions();
+        fileChooserView.resetInteractions();
     }
 
     private void chooseFile() {
@@ -227,7 +231,7 @@ public class MainView extends javax.swing.JFrame {
                 .addGap(20, 20, 20)
                 .addComponent(jButtons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40)
-                .addComponent(jResultPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jResultPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(40, 40, 40)
                 .addComponent(jResultTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
                 .addGap(30, 30, 30))

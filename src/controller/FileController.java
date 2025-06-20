@@ -4,8 +4,10 @@
  */
 package controller;
 
+import handler.FileHandler;
 import java.io.File;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import views.FileChooserView;
 import views.MainView;
 
@@ -29,7 +31,17 @@ public class FileController {
     }
     
     public void screen() {
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+            "Arquivos TXT e HTML", "txt", "html"
+        );
+        
+        jFileChooser.setFileFilter(filter);
+        
         startListener();
+    }
+    
+    public void resetInteractions() {
+        absolutePath = "";
     }
     
     private void startListener() {
@@ -41,6 +53,7 @@ public class FileController {
                 setAbsolutePath(selectedFile.getAbsolutePath());
                 
                 MainView.getMainView().setTextJFileLabel(absolutePath);
+                FileHandler.getFileHandler().treatFile(selectedFile);
             }
             
             FileChooserView.getFileChooserView().dispose();
