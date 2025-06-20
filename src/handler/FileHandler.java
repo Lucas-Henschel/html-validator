@@ -1,0 +1,62 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package handler;
+
+import controller.ResultFileController;
+import controller.TableFileController;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
+import stack.main.PilhaLista;
+
+/**
+ *
+ * @author lucas
+ */
+public class FileHandler {
+    public static FileHandler fileHandler;
+    
+    private final PilhaLista<String> stack = new PilhaLista<>();
+    
+    public static FileHandler getFileHandler() {
+        if (fileHandler == null) {
+            fileHandler = new FileHandler();
+        }
+        
+        return fileHandler;
+    }
+    
+    public void resetInteractions() {
+        stack.liberar();
+    }
+    
+    public void treatFile(File file) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                Pattern pattern = Pattern.compile("<[^>]+>");
+                Matcher matcher = pattern.matcher(line);
+                
+                while (matcher.find()) {
+                    stack.push(matcher.group());
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Erro ao ler o arquivo", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        ResultFileController.getResultFileController().treatResultFile();
+        TableFileController.getTableFileController().treatTableFile();
+    }
+
+    public PilhaLista<String> getStack() {
+        return stack;
+    }
+}

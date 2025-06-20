@@ -4,7 +4,7 @@ import stack.exceptions.PilhaVaziaException;
 import stack.interfaces.Pilha;
 
 public class PilhaLista<T> implements Pilha<T> {
-    private ListaEncadeada<T> listaEncadeada;
+    private ListaEncadeadaPilha<T> listaEncadeada;
 
     public PilhaLista() {
         liberar();
@@ -43,11 +43,15 @@ public class PilhaLista<T> implements Pilha<T> {
 
     @Override
     public void liberar() {
-        this.listaEncadeada = new ListaEncadeada<>();
+        this.listaEncadeada = new ListaEncadeadaPilha<>();
     }
 
     @Override
     public String toString() {
         return listaEncadeada.toString();
+    }
+
+    public ListaEncadeadaPilha<T> getListaEncadeada() {
+        return listaEncadeada;
     }
 }

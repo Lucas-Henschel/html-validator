@@ -1,19 +1,27 @@
-package stack.main;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package scatterMap.main;
 
-public class ListaEncadeada<T> {
-    private NoLista<T> primeiro;
+import scatterMap.model.NoMapa;
 
-    public ListaEncadeada() {
+/**
+ *
+ * @author lucas
+ */
+public class ListaEncadeadaMapa<T> {
+    private NoMapa<T> primeiro;
+
+    public ListaEncadeadaMapa() {
         primeiro = null;
     }
 
-    public NoLista getPrimeiro() {
+    public NoMapa getPrimeiro() {
         return primeiro;
     }
     
-    public void inserir(T value) {
-        NoLista<T> no = new NoLista<>(value);
-        
+    public void inserir (NoMapa<T> no) {        
         no.setProximo(primeiro);
         this.primeiro = no;
     }
@@ -22,11 +30,11 @@ public class ListaEncadeada<T> {
         return primeiro == null;
     }
     
-    public NoLista<T> buscar(T info) {
-        NoLista<T> current = primeiro;
+    public NoMapa<T> buscar(int chave) {
+        NoMapa<T> current = primeiro;
         
         while (current != null) {
-            if (current.getInfo().equals(info)) {
+            if (current.getChave() == chave) {
                 return current;
             }
             
@@ -37,7 +45,7 @@ public class ListaEncadeada<T> {
     }
     
     public void exibir() {
-        NoLista<T> current = primeiro;
+        NoMapa<T> current = primeiro;
         
         while (current != null) {
             System.out.println(current.getInfo() + " -> ");
@@ -47,27 +55,27 @@ public class ListaEncadeada<T> {
         System.out.println("null");
     }
     
-    public void retirar(T value) {
-        NoLista<T> last = null;
-        NoLista<T> current = primeiro;
-        
-        while (current != null && !current.getInfo().equals(value)) {
-            last = current;
-            current = current.getProximo();
+    public void retirar(int chave) {
+        NoMapa<T> anterior = null;
+        NoMapa<T> atual = primeiro;
+
+        while (atual != null && atual.getChave() != chave) {
+            anterior = atual;
+            atual = atual.getProximo();
         }
-        
-        if (current != null) {
-            if (last == null) {
-                primeiro = current.getProximo();
+
+        if (atual != null) {
+            if (anterior == null) {
+                primeiro = atual.getProximo();
             } else {
-                last.setProximo(current.getProximo());
+                anterior.setProximo(atual.getProximo());
             }
         }
     }
     
     public int obterComprimento() {
         int count = 0;
-        NoLista<T> current = primeiro;
+        NoMapa<T> current = primeiro;
         
         while (current != null) {
             count++;
@@ -77,13 +85,13 @@ public class ListaEncadeada<T> {
         return count;
     }
     
-    public NoLista<T> obterNo(int index) {
+    public NoMapa<T> obterNo(int index) {
         if (index < 0 || index >= obterComprimento()) {
             throw new IndexOutOfBoundsException("Posição inválida");
         }
         
         int count = 0;
-        NoLista<T> current = primeiro;
+        NoMapa<T> current = primeiro;
         
         while (count < index) {
             count++;
@@ -96,7 +104,7 @@ public class ListaEncadeada<T> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        NoLista<T> current = primeiro;
+        NoMapa<T> current = primeiro;
         
         while (current != null) {
             sb.append(current.getInfo())

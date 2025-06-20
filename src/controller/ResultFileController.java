@@ -4,6 +4,7 @@
  */
 package controller;
 
+import handler.FileHandler;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
@@ -13,6 +14,8 @@ import javax.swing.JTextArea;
  */
 public class ResultFileController {
     public static ResultFileController resultFileController;
+    
+    private final FileHandler fileHandler = FileHandler.getFileHandler();
     
     private JTextArea jResult;
     private JPanel jResultPanel;
@@ -27,6 +30,16 @@ public class ResultFileController {
     
     public void screen() {
         jResultPanel.setVisible(false);
+    }
+    
+    public void resetInteractions() {
+        jResultPanel.setVisible(false);
+        jResult.setText("");
+    }
+    
+    public void treatResultFile() {
+        jResultPanel.setVisible(true);
+        jResult.setText(fileHandler.getStack().toString());
     }
 
     public JTextArea getjResult() {
