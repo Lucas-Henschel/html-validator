@@ -50,4 +50,8 @@ public class PilhaLista<T> implements Pilha<T> {
     public String toString() {
         return listaEncadeada.toString();
     }
+
+    public ListaEncadeada<T> getListaEncadeada() {
+        return listaEncadeada;
+    }
 }
