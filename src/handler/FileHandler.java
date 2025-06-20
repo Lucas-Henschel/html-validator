@@ -37,6 +37,8 @@ public class FileHandler {
     }
     
     public void treatFile(File file) {
+        resetInteractions();
+        
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
 

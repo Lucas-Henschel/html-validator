@@ -9,7 +9,6 @@ import handler.FileHandler;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import scatterMap.main.ListaEncadeadaMapa;
 import scatterMap.main.MapaDispersao;
 import scatterMap.model.NoMapa;
 import stack.main.PilhaLista;
@@ -44,6 +43,9 @@ public class TableFileController {
     }
     
     public void resetInteractions() {
+        this.tagMap = new MapaDispersao<>(0);
+        this.startTags = new String[0];
+        
         jTableResultPanel.setVisible(false);
     }
     

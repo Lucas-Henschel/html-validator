@@ -74,6 +74,8 @@ public class MainView extends javax.swing.JFrame {
     }
 
     private void chooseFile() {
+        resetInteractions();
+        
         fileChooserView.setVisible(true);
         fileChooserView.screen();
     }

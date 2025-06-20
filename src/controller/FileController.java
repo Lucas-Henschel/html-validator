@@ -42,6 +42,8 @@ public class FileController {
     
     public void resetInteractions() {
         absolutePath = "";
+        
+        FileHandler.getFileHandler().resetInteractions();
     }
     
     private void startListener() {
