@@ -6,12 +6,15 @@ package controller;
 
 import enums.TagEnum;
 import handler.FileHandler;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import scatterMap.main.ListaEncadeadaMapa;
+import scatterMap.main.MapaDispersao;
+import scatterMap.model.NoMapa;
 import stack.main.PilhaLista;
+import utils.RestoreOriginalStackUtil;
+import utils.StartTagsUtil;
 
 /**
  *
@@ -21,6 +24,9 @@ public class TableFileController {
     public static TableFileController tableFileController;
     
     private final FileHandler fileHandler = FileHandler.getFileHandler();
+    
+    private MapaDispersao<String> tagMap;
+    private String[] startTags;
     
     private JTable jResultTable;
     private JPanel jTableResultPanel;
@@ -44,109 +50,60 @@ public class TableFileController {
     public void treatTableFile() {
         jTableResultPanel.setVisible(true);
         
-        PilhaLista<String> stack = fileHandler.getStack();
-        int stackSize = stack.getListaEncadeada().obterComprimento();
-        
+        PilhaLista<String> stack = fileHandler.getStack();        
         PilhaLista<String> tempStack = new PilhaLista<>();
         
-        String[] tags = new String[stackSize];
-        int[] counts = new int[stackSize];
-        int tagCount = countTags(stack, tempStack, tags, counts);
+        countTags(stack, tempStack);
+        RestoreOriginalStackUtil.restoreOriginalStack(stack, tempStack);
 
-        restoreOriginalStack(stack, tempStack);
-
-        DefaultTableModel tableModel = buildTableModel(tags, counts, tagCount);
+        DefaultTableModel tableModel = buildTableModel();
         updateResultTable(tableModel);
-
-//        DefaultTableModel tableModel = new DefaultTableModel();
-//        tableModel.addColumn("Tag");
-//        tableModel.addColumn("Número de ocorrências");
-//
-//        jResultTable.setRowHeight(35);
-//
-//        List<String> tags = new ArrayList<>();
-//        List<Integer> counts = new ArrayList<>();
-//
-//        while (!stack.estaVazia()) {
-//            String tag = stack.pop();            
-//            tempStack.push(tag);
-//            
-//            if (TagEnum.START_TAG.isStartTag(tag)) {
-//                int index = tags.indexOf(tag);
-//                
-//                if (index != -1) {
-//                    counts.set(index, counts.get(index) + 1);
-//                } else {
-//                    tags.add(tag);
-//                    counts.add(1);
-//                }
-//            }
-//        }
-//        
-//        while (!tempStack.estaVazia()) {
-//            stack.push(tempStack.pop());
-//        }
-//
-//        for (int i = tags.size() - 1; i >= 0; i--) {
-//            Object[] row = { 
-//                " " + tags.get(i), 
-//                counts.get(i) 
-//            };
-//            
-//            tableModel.addRow(row);
-//        }
-//
-//        jResultTable.setModel(tableModel);
-//        jResultTable.setVisible(false);
-//        jResultTable.setVisible(true);
     }
     
-    private int countTags(PilhaLista<String> stack, PilhaLista<String> tempStack, String[] tags, int[] counts) {
-        int size = 0;
+    private void countTags(PilhaLista<String> stack, PilhaLista<String> tempStack) {
+        int quantityStartTags = StartTagsUtil.countStartTags(stack);
+        this.tagMap = new MapaDispersao<>(quantityStartTags);
+        this.startTags = new String[quantityStartTags];
+        
+        int count = 0;
         
         while (!stack.estaVazia()) {
-            String tag = stack.pop();            
+            String tag = stack.pop();
             tempStack.push(tag);
-            
+
             if (TagEnum.START_TAG.isStartTag(tag)) {
-                int index = findTagIndex(tags, size, tag);
+                int key = tag.hashCode();
+                NoMapa<String> no = this.tagMap.buscar(key);
                 
-                if (index != -1) {
-                    counts[index]++;
+                if (no != null && no.getInfo().equals(tag)) {
+                    no.addCount();
                 } else {
-                    tags[size] = tag;
-                    counts[size] = 1;
-                    size++;
+                    this.tagMap.inserir(key, tag);
+                    
+                    this.startTags[count] = tag;
+                    count++;
                 }
             }
         }
+    }
         
-        return size;
-    }
-    
-    private int findTagIndex(String[] tags, int size, String tag) {
-        for (int i = 0; i < size; i++) {
-            if (tags[i].equals(tag)) {
-                return i;
-            }
-        }
-        
-        return -1;
-    }
-    
-    private void restoreOriginalStack(PilhaLista<String> stack, PilhaLista<String> tempStack) {
-        while (!tempStack.estaVazia()) {
-            stack.push(tempStack.pop());
-        }
-    }
-    
-    private DefaultTableModel buildTableModel(String[] tags, int[] counts, int size) {
+    private DefaultTableModel buildTableModel() {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Tag");
         model.addColumn("Número de ocorrências");
-
-        for (int i = size - 1; i >= 0; i--) {
-            model.addRow(new Object[]{" " + tags[i], counts[i]});
+                
+        for (int i = this.startTags.length - 1; i >= 0; i--) {
+            if (this.startTags[i] == null) continue;
+            
+            int key = this.startTags[i].hashCode();
+            NoMapa<String> no = this.tagMap.buscar(key);
+            
+            model.addRow(
+                new Object[]{
+                    " " + no.getInfo(), 
+                    no.getCount()
+                }
+            );
         }
 
         return model;
