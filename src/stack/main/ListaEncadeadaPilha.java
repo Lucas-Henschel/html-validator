@@ -1,32 +1,59 @@
 package stack.main;
 
-// Implementação de lista encadeada para uso em pilha genérica.
+/**
+ * Implementação de lista encadeada simples para uso em pilha genérica.
+ *
+ * @param <T> tipo dos elementos armazenados na lista
+ */
 public class ListaEncadeadaPilha<T> {
+
+    /**
+     * Referência para o primeiro nó da lista.
+     */
     private NoLista<T> primeiro;
 
-    // Inicializa lista vazia
+    /**
+     * Construtor que inicializa a lista vazia.
+     */
     public ListaEncadeadaPilha() {
         primeiro = null;
     }
 
-    // Retorna o primeiro nó da lista
+    /**
+     * Retorna o primeiro nó da lista.
+     *
+     * @return primeiro nó da lista
+     */
     public NoLista<T> getPrimeiro() {
         return primeiro;
     }
 
-    // Insere novo nó no início da lista
+    /**
+     * Insere um novo nó com o valor informado no início da lista.
+     *
+     * @param value valor a ser inserido
+     */
     public void inserir(T value) {
         NoLista<T> no = new NoLista<>(value);
         no.setProximo(primeiro);
         this.primeiro = no;
     }
 
-    // Verifica se a lista está vazia
+    /**
+     * Verifica se a lista está vazia.
+     *
+     * @return {@code true} se a lista estiver vazia, {@code false} caso contrário
+     */
     public boolean estaVazia() {
         return primeiro == null;
     }
 
-    // Busca nó contendo o valor informado
+    /**
+     * Busca um nó contendo o valor informado.
+     *
+     * @param info valor a ser buscado
+     * @return nó contendo o valor, ou {@code null} se não encontrado
+     */
     public NoLista<T> buscar(T info) {
         NoLista<T> current = primeiro;
         while (current != null) {
@@ -38,7 +65,9 @@ public class ListaEncadeadaPilha<T> {
         return null;
     }
 
-    // Exibe os elementos da lista no console
+    /**
+     * Exibe os elementos da lista no console, no formato "valor -> ... -> null".
+     */
     public void exibir() {
         NoLista<T> current = primeiro;
         while (current != null) {
@@ -48,7 +77,11 @@ public class ListaEncadeadaPilha<T> {
         System.out.println("null");
     }
 
-    // Remove o nó com o valor especificado
+    /**
+     * Remove o nó que contém o valor especificado.
+     *
+     * @param value valor do nó a ser removido
+     */
     public void retirar(T value) {
         NoLista<T> last = null;
         NoLista<T> current = primeiro;
@@ -65,7 +98,11 @@ public class ListaEncadeadaPilha<T> {
         }
     }
 
-    // Retorna o tamanho da lista
+    /**
+     * Retorna o tamanho da lista, ou seja, o número de nós.
+     *
+     * @return quantidade de nós na lista
+     */
     public int obterComprimento() {
         int count = 0;
         NoLista<T> current = primeiro;
@@ -76,7 +113,13 @@ public class ListaEncadeadaPilha<T> {
         return count;
     }
 
-    // Retorna o nó na posição index
+    /**
+     * Retorna o nó na posição especificada.
+     *
+     * @param index índice do nó (base zero)
+     * @return nó na posição index
+     * @throws IndexOutOfBoundsException se a posição for inválida
+     */
     public NoLista<T> obterNo(int index) {
         if (index < 0 || index >= obterComprimento()) {
             throw new IndexOutOfBoundsException("Posição inválida");
@@ -90,7 +133,11 @@ public class ListaEncadeadaPilha<T> {
         return current;
     }
 
-    // Representação em string da lista
+    /**
+     * Retorna a representação em string da lista, no formato "valor1 -> valor2 -> ... -> null".
+     *
+     * @return string representando a lista encadeada
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

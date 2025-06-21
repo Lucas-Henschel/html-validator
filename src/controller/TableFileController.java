@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package controller;
 
 import enums.TagEnum;
@@ -15,19 +11,47 @@ import stack.main.PilhaLista;
 import utils.RestoreOriginalStackUtil;
 import utils.StartTagsUtil;
 
-// Controlador responsável por processar as tags do arquivo e exibir os resultados em formato de tabela.
+/**
+ * Controlador responsável por processar as tags do arquivo
+ * e exibir os resultados em formato de tabela.
+ */
 public class TableFileController {
+
+    /**
+     * Instância singleton do {@code TableFileController}.
+     */
     public static TableFileController tableFileController;
 
+    /**
+     * Manipulador de arquivos utilizado para obter a pilha de dados.
+     */
     private final FileHandler fileHandler = FileHandler.getFileHandler();
 
+    /**
+     * Estrutura para armazenar as tags e suas contagens.
+     */
     private MapaDispersao<String> tagMap;
+
+    /**
+     * Array contendo as tags de início encontradas.
+     */
     private String[] startTags;
 
+    /**
+     * Tabela de resultados exibida na interface.
+     */
     private JTable jResultTable;
+
+    /**
+     * Painel que contém a tabela de resultados.
+     */
     private JPanel jTableResultPanel;
 
-    // Retorna a instância singleton do controlador
+    /**
+     * Retorna a instância singleton do controlador {@code TableFileController}.
+     *
+     * @return instância de {@code TableFileController}
+     */
     public static TableFileController getTableFileController() {
         if (tableFileController == null) {
             tableFileController = new TableFileController();
@@ -35,33 +59,45 @@ public class TableFileController {
         return tableFileController;
     }
 
-    // Oculta o painel da tabela
+    /**
+     * Oculta o painel da tabela de resultados.
+     */
     public void screen() {
         jTableResultPanel.setVisible(false);
     }
 
-    // Reseta dados e oculta o painel da tabela
+    /**
+     * Reseta os dados internos e oculta o painel da tabela.
+     */
     public void resetInteractions() {
         this.tagMap = new MapaDispersao<>(0);
         this.startTags = new String[0];
         jTableResultPanel.setVisible(false);
     }
 
-    // Processa as tags e exibe a tabela com os resultados
+    /**
+     * Processa as tags presentes no arquivo, monta a tabela de resultados
+     * e exibe os dados na interface.
+     */
     public void treatTableFile() {
         jTableResultPanel.setVisible(true);
 
         PilhaLista<String> stack = fileHandler.getStack();
         PilhaLista<String> tempStack = new PilhaLista<>();
 
-        countTags(stack, tempStack); // Conta as tags de início
-        RestoreOriginalStackUtil.restoreOriginalStack(stack, tempStack); // Restaura a pilha original
+        countTags(stack, tempStack);
+        RestoreOriginalStackUtil.restoreOriginalStack(stack, tempStack);
 
-        DefaultTableModel tableModel = buildTableModel(); // Monta a tabela
-        updateResultTable(tableModel); // Atualiza a UI
+        DefaultTableModel tableModel = buildTableModel();
+        updateResultTable(tableModel);
     }
 
-    // Conta a ocorrência das tags de início na pilha
+    /**
+     * Conta a ocorrência de tags de início na pilha de dados.
+     *
+     * @param stack pilha original com os dados
+     * @param tempStack pilha temporária utilizada para restauração
+     */
     private void countTags(PilhaLista<String> stack, PilhaLista<String> tempStack) {
         int quantityStartTags = StartTagsUtil.countStartTags(stack);
         this.tagMap = new MapaDispersao<>(quantityStartTags);
@@ -78,9 +114,9 @@ public class TableFileController {
                 NoMapa<String> no = this.tagMap.buscar(key);
 
                 if (no != null && no.getInfo().equals(tag)) {
-                    no.addCount(); // Tag já existe, incrementa contador
+                    no.addCount(); // Tag já existe, incrementa o contador
                 } else {
-                    this.tagMap.inserir(key, tag); // Insere nova tag
+                    this.tagMap.inserir(key, tag); // Nova tag
                     this.startTags[count] = tag;
                     count++;
                 }
@@ -88,7 +124,11 @@ public class TableFileController {
         }
     }
 
-    // Cria o modelo da tabela com as tags e contagens
+    /**
+     * Cria o modelo da tabela com as tags encontradas e suas contagens.
+     *
+     * @return {@code DefaultTableModel} com os dados processados
+     */
     private DefaultTableModel buildTableModel() {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Tag");
@@ -109,30 +149,50 @@ public class TableFileController {
         return model;
     }
 
-    // Atualiza e exibe a tabela na interface
+    /**
+     * Atualiza a interface com o novo modelo de tabela.
+     *
+     * @param model modelo da tabela contendo as tags e suas contagens
+     */
     private void updateResultTable(DefaultTableModel model) {
         jResultTable.setRowHeight(35);
         jResultTable.setModel(model);
-        jResultTable.setVisible(false);
+        jResultTable.setVisible(false); // Força o refresh visual
         jResultTable.setVisible(true);
     }
 
-    // Retorna o JTable
+    /**
+     * Retorna a tabela de resultados.
+     *
+     * @return {@code JTable} utilizada para exibir os resultados
+     */
     public JTable getjResultTable() {
         return jResultTable;
     }
 
-    // Define o JTable
+    /**
+     * Define a tabela de resultados.
+     *
+     * @param jResultTable nova {@code JTable}
+     */
     public void setjResultTable(JTable jResultTable) {
         this.jResultTable = jResultTable;
     }
 
-    // Retorna o painel da tabela
+    /**
+     * Retorna o painel que contém a tabela de resultados.
+     *
+     * @return {@code JPanel} da tabela
+     */
     public JPanel getjTableResultPanel() {
         return jTableResultPanel;
     }
 
-    // Define o painel da tabela
+    /**
+     * Define o painel que contém a tabela de resultados.
+     *
+     * @param jTableResultPanel novo painel da tabela
+     */
     public void setjTableResultPanel(JPanel jTableResultPanel) {
         this.jTableResultPanel = jTableResultPanel;
     }

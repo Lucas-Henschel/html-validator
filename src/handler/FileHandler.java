@@ -11,13 +11,27 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import stack.main.PilhaLista;
 
-// Classe responsável por ler o arquivo e extrair as tags HTML, armazenando em uma pilha
+/**
+ * Classe responsável por ler arquivos e extrair as tags HTML,
+ * armazenando-as em uma pilha para posterior processamento.
+ */
 public class FileHandler {
+
+    /**
+     * Instância singleton de {@code FileHandler}.
+     */
     public static FileHandler fileHandler;
 
+    /**
+     * Pilha que armazena as tags HTML extraídas do arquivo.
+     */
     private final PilhaLista<String> stack = new PilhaLista<>();
 
-    // Retorna a instância singleton do FileHandler
+    /**
+     * Retorna a instância singleton de {@code FileHandler}.
+     *
+     * @return instância de {@code FileHandler}
+     */
     public static FileHandler getFileHandler() {
         if (fileHandler == null) {
             fileHandler = new FileHandler();
@@ -25,12 +39,19 @@ public class FileHandler {
         return fileHandler;
     }
 
-    // Limpa a pilha
+    /**
+     * Limpa a pilha, removendo todos os elementos armazenados.
+     */
     public void resetInteractions() {
         stack.liberar();
     }
 
-    // Lê o arquivo, extrai as tags HTML e envia os dados para os controladores de resultado
+    /**
+     * Lê o conteúdo de um arquivo, extrai todas as tags HTML e empilha cada uma delas.
+     * Após a extração, envia os dados para os controladores de exibição de resultado e tabela.
+     *
+     * @param file arquivo a ser lido e processado
+     */
     public void treatFile(File file) {
         resetInteractions();
 
@@ -54,7 +75,11 @@ public class FileHandler {
         TableFileController.getTableFileController().treatTableFile();
     }
 
-    // Retorna a pilha de tags
+    /**
+     * Retorna a pilha contendo as tags HTML extraídas.
+     *
+     * @return pilha de tags HTML
+     */
     public PilhaLista<String> getStack() {
         return stack;
     }
