@@ -6,39 +6,36 @@ package views;
 
 import controller.FileController;
 
-/**
- *
- * @author lucas
- */
+// Interface gráfica para seleção de arquivos, integrada com FileController para tratamento da escolha do usuário.
 public class FileChooserView extends javax.swing.JFrame {
     public static FileChooserView fileChooserView;
-    
+
     private final FileController fileController = FileController.getFileController();
 
-    /**
-     * Creates new form FileChooserView
-     */
+    // Construtor que inicializa os componentes da interface
     public FileChooserView() {
         initComponents();
     }
-    
+
+    // Retorna a instância singleton da janela
     public static FileChooserView getFileChooserView() {
         if (fileChooserView == null) {
             fileChooserView = new FileChooserView();
         }
-        
         return fileChooserView;
     }
-    
+
+    // Configura e exibe a tela de seleção de arquivos
     public void screen() {
         fileController.setjFileChooser(jFileChooser);
         fileController.screen();
     }
-    
+
+    // Reseta interações no controller associadas à seleção de arquivo
     public void resetInteractions() {
         fileController.resetInteractions();
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

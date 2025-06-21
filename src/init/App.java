@@ -6,10 +6,7 @@ package init;
 
 import views.MainView;
 
-/**
- *
- * @author lhenschel
- */
+// Classe principal que inicializa e executa a aplicação.
 public class App extends javax.swing.JFrame {
 
     /**

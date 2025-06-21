@@ -6,11 +6,9 @@ package utils;
 
 import stack.main.PilhaLista;
 
-/**
- *
- * @author lucas
- */
+// Utilitário para restaurar o conteúdo original de uma pilha a partir de uma pilha temporária.
 public class RestoreOriginalStackUtil {
+    // Restaura os elementos da pilha temporária para a pilha original, invertendo a ordem.
     public static void restoreOriginalStack(PilhaLista<String> stack, PilhaLista<String> tempStack) {
         while (!tempStack.estaVazia()) {
             stack.push(tempStack.pop());

@@ -4,10 +4,7 @@
  */
 package enums;
 
-/**
- *
- * @author lucas
- */
+// Enum que representa tags HTML que não possuem fechamento (self-closing).
 public enum SingletonTagEnum {
     META("meta"),
     BASE("base"),
@@ -24,26 +21,28 @@ public enum SingletonTagEnum {
     DOCTYPE("!DOCTYPE");
 
     private final String tagName;
-    
+
     SingletonTagEnum(String tagName) {
         this.tagName = tagName.toLowerCase();
     }
 
+    // Retorna o nome da tag
     public String getTagName() {
         return tagName;
     }
-    
+
+    // Verifica se a tag informada é singleton
     public static boolean isSingleton(String tag) {
         if (tag == null) return false;
 
         String normalized = tag.replaceAll("<|>|/|\\s.*", "").toLowerCase();
-        
+
         for (SingletonTagEnum tagName : SingletonTagEnum.values()) {
             if (tagName.getTagName().equals(normalized)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 }
