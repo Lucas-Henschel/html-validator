@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package utils;
 
 import enums.TagEnum;
@@ -19,9 +23,6 @@ public class StartTagsUtil {
         PilhaLista<String> tempStack = new PilhaLista<>();
         int count = 0;
 
-        /**
-         * Percorre a pilha original, contando tags de início e copiando para tempStack.
-         */
         while (!stack.estaVazia()) {
             String tag = stack.pop();
             tempStack.push(tag);
@@ -31,9 +32,6 @@ public class StartTagsUtil {
             }
         }
 
-        /**
-         * Restaura a pilha original com os elementos da pilha temporária.
-         */
         RestoreOriginalStackUtil.restoreOriginalStack(stack, tempStack);
 
         return count;

@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package controller;
 
 import enums.TagEnum;
@@ -114,9 +118,9 @@ public class TableFileController {
                 NoMapa<String> no = this.tagMap.buscar(key);
 
                 if (no != null && no.getInfo().equals(tag)) {
-                    no.addCount(); // Tag já existe, incrementa o contador
+                    no.addCount();
                 } else {
-                    this.tagMap.inserir(key, tag); // Nova tag
+                    this.tagMap.inserir(key, tag);
                     this.startTags[count] = tag;
                     count++;
                 }
@@ -141,8 +145,8 @@ public class TableFileController {
             NoMapa<String> no = this.tagMap.buscar(key);
 
             model.addRow(new Object[]{
-                    " " + no.getInfo(),
-                    no.getCount()
+                " " + no.getInfo(),
+                no.getCount()
             });
         }
 
@@ -157,7 +161,7 @@ public class TableFileController {
     private void updateResultTable(DefaultTableModel model) {
         jResultTable.setRowHeight(35);
         jResultTable.setModel(model);
-        jResultTable.setVisible(false); // Força o refresh visual
+        jResultTable.setVisible(false);
         jResultTable.setVisible(true);
     }
 
