@@ -31,13 +31,15 @@ public class MapaDispersao<T> {
         NoMapa<T> noMapa = new NoMapa<>(chave, value);
         info[indice].inserir(noMapa);
     }
-    
+
     public void remover(int chave) {
         int pos = calcularHash(chave);
-        
-        info[pos].retirar(chave);
+
+        if (info[pos] != null) {
+            info[pos].retirar(chave);
+        }
     }
-    
+
     public NoMapa<T> buscar(int chave){
         int indice = calcularHash(chave);
         
