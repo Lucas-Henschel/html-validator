@@ -6,6 +6,7 @@ package handler;
 
 import controller.ResultFileController;
 import controller.TableFileController;
+import enums.SingletonTagEnum;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -43,11 +44,19 @@ public class FileHandler {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                Pattern pattern = Pattern.compile("<[^>]+>");
+                Pattern pattern = Pattern.compile("</?\\s*([a-zA-Z0-9]+)[^>]*>");
                 Matcher matcher = pattern.matcher(line);
                 
                 while (matcher.find()) {
-                    stack.push(matcher.group());
+                    String tagName = matcher.group(1);
+                    boolean isClosing = line.charAt(matcher.start() + 1) == '/';
+                    String cleanTag = isClosing ? "</" + tagName + ">" : "<" + tagName + ">";
+                    
+                    if (SingletonTagEnum.isSingleton(tagName)) {
+                        stack.push(cleanTag);
+                    } else {
+                        stack.push(cleanTag);
+                    }
                 }
             }
         } catch (IOException e) {

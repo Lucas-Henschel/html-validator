@@ -90,7 +90,12 @@ public class TableFileController {
     }
         
     private DefaultTableModel buildTableModel() {
-        DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel model = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         model.addColumn("Tag");
         model.addColumn("Número de ocorrências");
                 
@@ -112,6 +117,7 @@ public class TableFileController {
     }
     
     private void updateResultTable(DefaultTableModel model) {
+        jResultTable.getTableHeader().setReorderingAllowed(false);
         jResultTable.setRowHeight(35);
         jResultTable.setModel(model);
         jResultTable.setVisible(false);
