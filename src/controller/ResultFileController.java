@@ -39,7 +39,13 @@ public class ResultFileController {
     
     public void treatResultFile() {
         jResultPanel.setVisible(true);
-        jResult.setText(fileHandler.getStack().toString());
+        jResult.setText(
+            "APROVADO: " + 
+            fileHandler.getTagsApproved().toString() + 
+            "\n" +
+            "REPROVADO: " +
+            fileHandler.getTagsRepproved().toString()
+        );
     }
 
     public JTextArea getjResult() {

@@ -11,7 +11,7 @@ import stack.main.PilhaLista;
  *
  * @author lucas
  */
-public class StartTagsUtil {
+public class TagsUtil {
     public static int countStartTags(PilhaLista<String> stack) {
         PilhaLista<String> tempStack = new PilhaLista<>();
         int count = 0;
@@ -28,5 +28,32 @@ public class StartTagsUtil {
         RestoreOriginalStackUtil.restoreOriginalStack(stack, tempStack);
         
         return count;
+    }
+    
+    public static String getTagName(String tag) {
+        if (tag == null) return "";
+        
+        return tag.replaceAll("</?|>", "")
+            .replaceAll("\\s.*", "")
+            .toLowerCase();
+    }
+    
+    public static boolean isTagExist(PilhaLista<String> stack, String value) {
+        PilhaLista<String> temp = new PilhaLista<>();
+        
+        boolean found = false;
+
+        while (!stack.estaVazia()) {
+            String current = stack.pop();
+            if (current.equals(value)) found = true;
+            
+            temp.push(current);
+        }
+
+        while (!temp.estaVazia()) {
+            stack.push(temp.pop());
+        }
+        
+        return found;
     }
 }

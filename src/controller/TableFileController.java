@@ -13,7 +13,7 @@ import scatterMap.main.MapaDispersao;
 import scatterMap.model.NoMapa;
 import stack.main.PilhaLista;
 import utils.RestoreOriginalStackUtil;
-import utils.StartTagsUtil;
+import utils.TagsUtil;
 
 /**
  *
@@ -52,7 +52,7 @@ public class TableFileController {
     public void treatTableFile() {
         jTableResultPanel.setVisible(true);
         
-        PilhaLista<String> stack = fileHandler.getStack();        
+        PilhaLista<String> stack = fileHandler.getTagsApproved();        
         PilhaLista<String> tempStack = new PilhaLista<>();
         
         countTags(stack, tempStack);
@@ -63,7 +63,7 @@ public class TableFileController {
     }
     
     private void countTags(PilhaLista<String> stack, PilhaLista<String> tempStack) {
-        int quantityStartTags = StartTagsUtil.countStartTags(stack);
+        int quantityStartTags = TagsUtil.countStartTags(stack);
         this.tagMap = new MapaDispersao<>(quantityStartTags);
         this.startTags = new String[quantityStartTags];
         
