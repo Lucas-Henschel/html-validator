@@ -4,7 +4,6 @@
  */
 package utils;
 
-import enums.TagEnum;
 import stack.main.PilhaLista;
 
 /**
@@ -12,24 +11,6 @@ import stack.main.PilhaLista;
  * @author lucas
  */
 public class TagsUtil {
-    public static int countStartTags(PilhaLista<String> stack) {
-        PilhaLista<String> tempStack = new PilhaLista<>();
-        int count = 0;
-        
-        while (!stack.estaVazia()) {
-            String tag = stack.pop();
-            tempStack.push(tag);
-            
-            if (TagEnum.START_TAG.isStartTag(tag)) {
-                count++;
-            }
-        }
-        
-        RestoreOriginalStackUtil.restoreOriginalStack(stack, tempStack);
-        
-        return count;
-    }
-    
     public static String getTagName(String tag) {
         if (tag == null) return "";
         

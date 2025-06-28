@@ -40,6 +40,9 @@ public class ResultFileController {
     public void treatResultFile() {
         jResultPanel.setVisible(true);
         jResult.setText(
+            "ALL TAGS: " +
+            fileHandler.getAllTags().toString() +
+            "\n" +
             "APROVADO: " + 
             fileHandler.getTagsApproved().toString() + 
             "\n" +

@@ -18,7 +18,7 @@ public class MapaDispersao<T> {
     }
     
     private int calcularHash(int chave) {
-        return chave % info.length;
+        return Math.floorMod(chave, info.length);
     }
     
     public void inserir(int chave, T value) {

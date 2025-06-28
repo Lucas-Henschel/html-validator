@@ -9,6 +9,7 @@ import handler.FileHandler;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import scatterMap.main.ListaEncadeadaMapa;
 import scatterMap.main.MapaDispersao;
 import scatterMap.model.NoMapa;
 import stack.main.PilhaLista;
@@ -25,7 +26,9 @@ public class TableFileController {
     private final FileHandler fileHandler = FileHandler.getFileHandler();
     
     private MapaDispersao<String> tagMap;
-    private String[] startTags;
+    
+    private PilhaLista<String> stack = new PilhaLista<>();
+    private PilhaLista<String> tempStack = new PilhaLista<>();
     
     private JTable jResultTable;
     private JPanel jTableResultPanel;
@@ -44,7 +47,6 @@ public class TableFileController {
     
     public void resetInteractions() {
         this.tagMap = new MapaDispersao<>(0);
-        this.startTags = new String[0];
         
         jTableResultPanel.setVisible(false);
     }
@@ -52,23 +54,20 @@ public class TableFileController {
     public void treatTableFile() {
         jTableResultPanel.setVisible(true);
         
-        PilhaLista<String> stack = fileHandler.getTagsApproved();        
-        PilhaLista<String> tempStack = new PilhaLista<>();
+        stack = fileHandler.getTagsApproved();        
+        tempStack = new PilhaLista<>();
         
-        countTags(stack, tempStack);
+        countTags();
         RestoreOriginalStackUtil.restoreOriginalStack(stack, tempStack);
 
         DefaultTableModel tableModel = buildTableModel();
         updateResultTable(tableModel);
     }
     
-    private void countTags(PilhaLista<String> stack, PilhaLista<String> tempStack) {
-        int quantityStartTags = TagsUtil.countStartTags(stack);
+    private void countTags() {
+        int quantityStartTags = stack.getListaEncadeada().obterComprimento();
         this.tagMap = new MapaDispersao<>(quantityStartTags);
-        this.startTags = new String[quantityStartTags];
-        
-        int count = 0;
-        
+                
         while (!stack.estaVazia()) {
             String tag = stack.pop();
             tempStack.push(tag);
@@ -81,9 +80,6 @@ public class TableFileController {
                     no.addCount();
                 } else {
                     this.tagMap.inserir(key, tag);
-                    
-                    this.startTags[count] = tag;
-                    count++;
                 }
             }
         }
@@ -96,23 +92,35 @@ public class TableFileController {
                 return false;
             }
         };
+        
         model.addColumn("Tag");
         model.addColumn("Número de ocorrências");
-                
-        for (int i = this.startTags.length - 1; i >= 0; i--) {
-            if (this.startTags[i] == null) continue;
-            
-            int key = this.startTags[i].hashCode();
-            NoMapa<String> no = this.tagMap.buscar(key);
-            
-            model.addRow(
-                new Object[]{
-                    " " + no.getInfo(), 
-                    no.getCount()
-                }
-            );
+        
+        tempStack = new PilhaLista<>();
+        
+        while (!stack.estaVazia()) {
+            String tag = stack.pop();
+            tempStack.push(tag);
         }
+        
+        while(!tempStack.estaVazia()) {
+            String tag = tempStack.pop();
+            stack.push(tag);
+            
+            if (!TagsUtil.isTagExist(tempStack, tag)) {
+                int key = tag.hashCode();
+            
+                NoMapa<String> node = tagMap.buscar(key);
 
+                model.addRow(
+                    new Object[]{
+                        " " + node.getInfo(), 
+                        node.getCount()
+                    }
+                );
+            }
+        }
+                
         return model;
     }
     
