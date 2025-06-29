@@ -8,82 +8,92 @@ import controller.ResultFileController;
 import controller.TableFileController;
 
 /**
- *
- * @author lhenschel
+ * Interface principal da aplicação para seleção de arquivo,
+ * exibe dos resultados da validação HTML em texto e tabela,
+ * e controle das interações com os controllers.
  */
 public class MainView extends javax.swing.JFrame {
+    /** Instância singleton da MainView */
     public static MainView main;
-    
+
+    /** Controller responsável pela exibição dos resultados em texto */
     private final ResultFileController resultFileController = ResultFileController.getResultFileController();
+
+    /** Controller responsável pela exibição dos resultados em tabela */
     private final TableFileController tableFileController = TableFileController.getTableFileController();
-    
+
+    /** View para escolha de arquivos */
     private final FileChooserView fileChooserView = FileChooserView.getFileChooserView();
-    
+
     /**
-     * Creates new form MainView
+     * Construtor que inicializa os componentes e maximiza a janela.
      */
     public MainView() {
         initComponents();
         setExtendedState(MAXIMIZED_BOTH);
     }
-    
+
     /**
-     * Retorna uma instância da class MainView
-     *
-     * @return MainView
+     * Retorna a instância única (singleton) da MainView.
+     * @return Instância da MainView
      */
     public static MainView getMainView() {
         if (main == null) {
             main = new MainView();
         }
-        
+
         return main;
     }
-    
+        
     /**
-     * Método responsável para iniciar junto com a janela
-     *
+     * Inicializa os controllers associados à janela principal.
      */
     public void screen() {
         initResultFileController();
         initTableFileController();
     }
-    
+
+    /** Inicializa o controller de resultado em texto */
     private void initResultFileController() {
         resultFileController.setjResult(jResult);
         resultFileController.setjResultPanel(jResultPanel);
         resultFileController.screen();
     }
-    
+
+    /** Inicializa o controller de resultado em tabela */
     private void initTableFileController() {
         tableFileController.setjResultTable(jResultTable);
         tableFileController.setjTableResultPanel(jResultTablePanel);
         tableFileController.screen();
     }
-    
+
     /**
-     * Limpa as interações antiga que teve na janela
-     *
+     * Reseta as interações e estados anteriores da interface.
      */
     public void resetInteractions() {
         setTextJFileLabel("Nenhum arquivo selecionado");
-        
         resultFileController.resetInteractions();
         tableFileController.resetInteractions();
         fileChooserView.resetInteractions();
     }
 
+    /**
+     * Abre a janela para escolha de arquivo após resetar interações.
+     */
     private void chooseFile() {
         resetInteractions();
-        
         fileChooserView.setVisible(true);
         fileChooserView.screen();
     }
-    
+
+    /**
+     * Atualiza o texto do label que mostra o caminho do arquivo selecionado.
+     * @param message Mensagem a ser exibida no label
+     */
     public void setTextJFileLabel(String message) {
         jFileLabel.setText("Caminho do arquivo: " + message);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -263,33 +273,6 @@ public class MainView extends javax.swing.JFrame {
         resetInteractions();
     }//GEN-LAST:event_jCleanDataButtonMouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jButtons;
