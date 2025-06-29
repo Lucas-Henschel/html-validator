@@ -1,0 +1,7 @@
+<html>
+  <body>
+    <a href="http://exemplo.com">Clique aqui</a>
+    <input type="text" name="nome">
+    <p style="color:red;">Parágrafo com estilo</p>
+  </body>
+</html>

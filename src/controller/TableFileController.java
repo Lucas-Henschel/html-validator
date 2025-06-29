@@ -94,6 +94,7 @@ public class TableFileController {
         DefaultTableModel tableModel = buildTableModel();
         updateResultTable(tableModel);
     }
+    
     /**
      * Conta a ocorrência de tags de início na pilha de dados.
      *
