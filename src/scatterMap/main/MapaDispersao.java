@@ -57,13 +57,9 @@ public class MapaDispersao<T> {
         info[indice].inserir(noMapa);
     }
 
-    /**
-     * Remove o nó com a chave especificada da tabela.
-     *
-     * @param chave chave do nó a ser removido
-     */
     public void remover(int chave) {
         int pos = calcularHash(chave);
+
         if (info[pos] != null) {
             info[pos].retirar(chave);
         }
@@ -75,11 +71,18 @@ public class MapaDispersao<T> {
      * @param chave chave a ser buscada
      * @return nó com a chave correspondente ou {@code null} se não encontrado
      */
-    public NoMapa<T> buscar(int chave) {
+    public NoMapa<T> buscar(int chave){
         int indice = calcularHash(chave);
-
+        
         if (info[indice] != null) {
-            return info[indice].buscar(chave);
+            NoMapa<T> noMapa = new NoMapa<>();
+            noMapa.setChave(chave);
+            
+            NoMapa<T> no = info[indice].buscar(chave);
+            
+            if (no != null) {
+                return no;
+            }
         }
 
         return null;
