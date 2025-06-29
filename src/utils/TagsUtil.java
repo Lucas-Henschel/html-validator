@@ -15,8 +15,7 @@ public class TagsUtil {
         if (tag == null) return "";
         
         return tag.replaceAll("</?|>", "")
-            .replaceAll("\\s.*", "")
-            .toLowerCase();
+            .replaceAll("\\s.*", "");
     }
     
     public static boolean isTagExist(PilhaLista<String> stack, String value) {

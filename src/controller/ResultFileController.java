@@ -39,16 +39,21 @@ public class ResultFileController {
     
     public void treatResultFile() {
         jResultPanel.setVisible(true);
-        jResult.setText(
-            "ALL TAGS: " +
-            fileHandler.getAllTags().toString() +
-            "\n" +
-            "APROVADO: " + 
-            fileHandler.getTagsApproved().toString() + 
-            "\n" +
-            "REPROVADO: " +
-            fileHandler.getTagsRepproved().toString()
-        );
+        jResult.setText(buildResultFile());
+    }
+    
+    private String buildResultFile() {
+        StringBuilder sb = new StringBuilder();
+        
+        if (fileHandler.getAllTags().estaVazia()) {
+            sb.append("Nenhuma tag HTML foi encontrada no arquivo.");
+        } else if (fileHandler.getTagsRepproved().estaVazia()) {
+             sb.append("O arquivo está bem formatado.");
+        } else {
+            sb.append("O arquivo não esta bem formatado.");
+        }
+        
+        return sb.toString();
     }
 
     public JTextArea getjResult() {

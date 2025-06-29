@@ -4,12 +4,12 @@
  */
 package controller;
 
+import enums.SingletonTagEnum;
 import enums.TagEnum;
 import handler.FileHandler;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import scatterMap.main.ListaEncadeadaMapa;
 import scatterMap.main.MapaDispersao;
 import scatterMap.model.NoMapa;
 import stack.main.PilhaLista;
@@ -98,28 +98,31 @@ public class TableFileController {
         
         tempStack = new PilhaLista<>();
         
-        while (!stack.estaVazia()) {
-            String tag = stack.pop();
-            tempStack.push(tag);
-        }
+        RestoreOriginalStackUtil.restoreOriginalStack(tempStack, fileHandler.getAllTags());
         
         while(!tempStack.estaVazia()) {
             String tag = tempStack.pop();
-            stack.push(tag);
+            fileHandler.getAllTags().push(tag);
             
-            if (!TagsUtil.isTagExist(tempStack, tag)) {
-                int key = tag.hashCode();
+            if (!TagsUtil.isTagExist(fileHandler.getTagsApproved(), tag)) continue;
             
-                NoMapa<String> node = tagMap.buscar(key);
+            if (TagEnum.START_TAG.isStartTag(tag) || SingletonTagEnum.isSingleton(tag)) {
+                if (!TagsUtil.isTagExist(tempStack, tag)) {
+                    int key = tag.hashCode();
 
-                model.addRow(
-                    new Object[]{
-                        " " + node.getInfo(), 
-                        node.getCount()
-                    }
-                );
+                    NoMapa<String> node = tagMap.buscar(key);
+
+                    model.addRow(
+                        new Object[]{
+                            " " + node.getInfo(), 
+                            node.getCount()
+                        }
+                    );
+                }
             }
         }
+        
+        RestoreOriginalStackUtil.restoreOriginalStack(stack, tempStack);
                 
         return model;
     }

@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import stack.main.PilhaLista;
+import utils.RestoreOriginalStackUtil;
 import utils.TagsUtil;
 
 /**
@@ -41,6 +42,8 @@ public class FileHandler {
     
     public void resetInteractions() {
         allTags.liberar();
+        tagsApproved.liberar();
+        tagsRepproved.liberar();
     }
     
     public void treatFile(File file) {
@@ -72,23 +75,24 @@ public class FileHandler {
             JOptionPane.showMessageDialog(null, "Erro ao ler o arquivo", "Erro", JOptionPane.ERROR_MESSAGE);
         }
         
-        fillTagsApproved();
-        fillTagsRepproved();
+        handleHtmlTags();
         
         ResultFileController.getResultFileController().treatResultFile();
-        TableFileController.getTableFileController().treatTableFile();
+        
+        if (getTagsRepproved().estaVazia()) {
+            TableFileController.getTableFileController().treatTableFile();
+        }
     }
     
-    private void fillTagsApproved() {
+    private void handleHtmlTags() {
         tagsApproved.liberar();
+        tagsRepproved.liberar();
 
         PilhaLista<String> tempStack = new PilhaLista<>();
         PilhaLista<String> openTags = new PilhaLista<>();
         PilhaLista<String> aprovadasTemp = new PilhaLista<>();
 
-        while (!allTags.estaVazia()) {
-            tempStack.push(allTags.pop());
-        }
+        RestoreOriginalStackUtil.restoreOriginalStack(tempStack, allTags);
 
         while (!tempStack.estaVazia()) {
             String tag = tempStack.pop();
@@ -96,126 +100,36 @@ public class FileHandler {
 
             if (SingletonTagEnum.isSingleton(tag)) {
                 aprovadasTemp.push(tag);
-            } else if (!tag.startsWith("</")) {
+            } else if (TagEnum.START_TAG.isStartTag(tag)) {
                 openTags.push(tag);
-                aprovadasTemp.push(tag);
             } else {
-                if (!openTags.estaVazia()) {
-                    String lastOpen = openTags.peek();
-
-                    String openName  = TagsUtil.getTagName(lastOpen).toLowerCase();
-                    String closeName = TagsUtil.getTagName(tag).toLowerCase();
-
-                    if (openName.equals(closeName)) {
-                        openTags.pop();
-                    }
-                }
-            }
-        }
-
-        PilhaLista<String> cleanStack = new PilhaLista<>();
-
-        while (!aprovadasTemp.estaVazia()) {
-            String tag = aprovadasTemp.pop();
-
-            if (!tag.startsWith("</") && !SingletonTagEnum.isSingleton(tag)) {
-                boolean found = false;
-                PilhaLista<String> aux = new PilhaLista<>();
-
-                while (!openTags.estaVazia()) {
-                    String t = openTags.pop();
-                    
-                    if (!found && t.equals(tag)) {
-                        found = true;
-                    } else {
-                        aux.push(t);
-                    }
+                if (openTags.estaVazia()) {
+                    tagsRepproved.push(tag);
+                    continue;
                 }
 
-                while (!aux.estaVazia()) {
-                    openTags.push(aux.pop());
-                }
+                String lastOpen = openTags.peek();
+                String closeName = TagsUtil.getTagName(tag);
+                String openName = TagsUtil.getTagName(lastOpen);
 
-                if (!found) {
-                    cleanStack.push(tag);
-                }
-            } else {
-                cleanStack.push(tag);
-            }
-        }
-
-        while (!cleanStack.estaVazia()) {
-            tagsApproved.push(cleanStack.pop());
-        }
-    }
-
-    private void fillTagsRepproved() {
-        tagsRepproved.liberar();
-
-        if (tagsApproved.estaVazia()) {
-            fillTagsApproved();
-        }
-
-        PilhaLista<String> tempStack = new PilhaLista<>();
-        PilhaLista<String> openStack = new PilhaLista<>();
-        PilhaLista<String> reprovTemp = new PilhaLista<>();
-
-        while (!allTags.estaVazia()) {
-            tempStack.push(allTags.pop());
-        }
-
-        while (!tempStack.estaVazia()) {
-            String tag = tempStack.pop();
-            allTags.push(tag);
-
-            if (SingletonTagEnum.isSingleton(tag)) continue;
-
-            if (!tag.startsWith("</")) {
-                openStack.push(tag);
-                reprovTemp.push(tag);
-                
-                continue;
-            }
-
-            if (!openStack.estaVazia()) {
-                String topOpen = openStack.peek();
-                String openName = TagsUtil.getTagName(topOpen).toLowerCase();
-                String closeName = TagsUtil.getTagName(tag).toLowerCase();
-
-                if (openName.equals(closeName)) {
-                    openStack.pop();
-
-                    PilhaLista<String> aux = new PilhaLista<>();
-                    
-                    while (!reprovTemp.estaVazia()) {
-                        String reprovTag = reprovTemp.pop();
-                        
-                        if (reprovTag.equals(topOpen)) {
-                            break;
-                        }
-                        
-                        aux.push(reprovTag);
-                    }
-                    
-                    while (!aux.estaVazia()) reprovTemp.push(aux.pop());
+                if (openName.equalsIgnoreCase(closeName)) {
+                    openTags.pop();
+                    aprovadasTemp.push(tag);
+                    aprovadasTemp.push(lastOpen);
                 } else {
-                    reprovTemp.push(tag);
+                    tagsRepproved.push(tag);
+                    tagsRepproved.push(openTags.pop());
                 }
-            } else {
-                reprovTemp.push(tag);
             }
         }
 
-        PilhaLista<String> finalStack = new PilhaLista<>();
-        while (!reprovTemp.estaVazia()) {
-            finalStack.push(reprovTemp.pop());
+        while (!openTags.estaVazia()) {
+            tagsRepproved.push(openTags.pop());
         }
         
-        while (!finalStack.estaVazia()) {
-            tagsRepproved.push(finalStack.pop());
-        }
+        RestoreOriginalStackUtil.restoreOriginalStack(tagsApproved, aprovadasTemp);
     }
-    
+   
     public PilhaLista<String> getAllTags() {
         return allTags;
     }
