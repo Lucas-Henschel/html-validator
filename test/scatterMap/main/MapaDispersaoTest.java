@@ -1,10 +1,9 @@
 package scatterMap.main;
 
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import scatterMap.model.NoMapa;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Testa a funcionalidade da classe {@link MapaDispersao}, que implementa um mapa baseado em hashing
