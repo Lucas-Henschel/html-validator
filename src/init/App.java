@@ -7,38 +7,39 @@ package init;
 import views.MainView;
 
 /**
- *
- * @author lhenschel
+ * Classe principal responsável por inicializar e executar a aplicação.
+ * Estende {@code javax.swing.JFrame} e exibe a interface principal ao ser executada.
  */
 public class App extends javax.swing.JFrame {
 
     /**
-     * Creates new form App
+     * Construtor da classe {@code App}.
+     * Inicializa os componentes da janela e executa o método de inicialização.
      */
     public App() {
         initComponents();
         init();
     }
-    
+
     /**
-     * Método de inicialização da class
-     *
+     * Método de inicialização da aplicação.
+     * Exibe a tela principal e reseta os dados da interface.
      */
     private void init() {
         showMainView();
     }
 
     /**
-     * Mostra a janela principal do programa
-     *
+     * Exibe a janela principal da aplicação,
+     * limpando os dados anteriores e preparando a interface.
      */
     private void showMainView() {
         MainView mainView = MainView.getMainView();
-        mainView.resetInteractions();
-        mainView.screen();
         mainView.setVisible(true);
+        mainView.screen();
+        mainView.resetInteractions();
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -54,11 +55,11 @@ public class App extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+                .addGap(0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+                .addGap(0, 300, Short.MAX_VALUE)
         );
 
         pack();
@@ -80,17 +81,12 @@ public class App extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException |
+                 IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        
         new App();
     }
 

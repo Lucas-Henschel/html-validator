@@ -4,49 +4,94 @@
  */
 package views;
 
+import controller.ResultFileController;
+import controller.TableFileController;
+
 /**
- *
- * @author lhenschel
+ * Interface principal da aplicação para seleção de arquivo,
+ * exibe dos resultados da validação HTML em texto e tabela,
+ * e controle das interações com os controllers.
  */
 public class MainView extends javax.swing.JFrame {
-
+    /** Instância singleton da MainView */
     public static MainView main;
-    
+
+    /** Controller responsável pela exibição dos resultados em texto */
+    private final ResultFileController resultFileController = ResultFileController.getResultFileController();
+
+    /** Controller responsável pela exibição dos resultados em tabela */
+    private final TableFileController tableFileController = TableFileController.getTableFileController();
+
+    /** View para escolha de arquivos */
+    private final FileChooserView fileChooserView = FileChooserView.getFileChooserView();
+
     /**
-     * Creates new form MainView
+     * Construtor que inicializa os componentes e maximiza a janela.
      */
     public MainView() {
         initComponents();
         setExtendedState(MAXIMIZED_BOTH);
     }
-    
+
     /**
-     * Retorna uma instância da class MainView
-     *
-     * @return MainView
+     * Retorna a instância única (singleton) da MainView.
+     * @return Instância da MainView
      */
     public static MainView getMainView() {
         if (main == null) {
             main = new MainView();
         }
-        
+
         return main;
     }
-    
+        
     /**
-     * Método responsável para iniciar junto com a janela
-     *
+     * Inicializa os controllers associados à janela principal.
      */
     public void screen() {
-    
+        initResultFileController();
+        initTableFileController();
     }
-    
+
+    /** Inicializa o controller de resultado em texto */
+    private void initResultFileController() {
+        resultFileController.setjResult(jResult);
+        resultFileController.setjResultPanel(jResultPanel);
+        resultFileController.screen();
+    }
+
+    /** Inicializa o controller de resultado em tabela */
+    private void initTableFileController() {
+        tableFileController.setjResultTable(jResultTable);
+        tableFileController.setjTableResultPanel(jResultTablePanel);
+        tableFileController.screen();
+    }
+
     /**
-     * Limpa as interações antiga que teve na janela
-     *
+     * Reseta as interações e estados anteriores da interface.
      */
     public void resetInteractions() {
-        
+        setTextJFileLabel("Nenhum arquivo selecionado");
+        resultFileController.resetInteractions();
+        tableFileController.resetInteractions();
+        fileChooserView.resetInteractions();
+    }
+
+    /**
+     * Abre a janela para escolha de arquivo após resetar interações.
+     */
+    private void chooseFile() {
+        resetInteractions();
+        fileChooserView.setVisible(true);
+        fileChooserView.screen();
+    }
+
+    /**
+     * Atualiza o texto do label que mostra o caminho do arquivo selecionado.
+     * @param message Mensagem a ser exibida no label
+     */
+    public void setTextJFileLabel(String message) {
+        jFileLabel.setText("Caminho do arquivo: " + message);
     }
 
     /**
@@ -58,57 +103,189 @@ public class MainView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMain = new javax.swing.JPanel();
+        jFilePanel = new javax.swing.JPanel();
+        jFileButton = new javax.swing.JButton();
+        jFileLabel = new javax.swing.JLabel();
+        jButtons = new javax.swing.JPanel();
+        jCleanDataButton = new javax.swing.JButton();
+        jResultPanel = new javax.swing.JPanel();
+        jScrollResultPane = new javax.swing.JScrollPane();
+        jResult = new javax.swing.JTextArea();
+        jResultTablePanel = new javax.swing.JPanel();
+        jScrollResultTablePanel = new javax.swing.JScrollPane();
+        jResultTable = new javax.swing.JTable();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Validador HTML");
+        setMinimumSize(new java.awt.Dimension(798, 560));
+        setPreferredSize(new java.awt.Dimension(758, 570));
+
+        jFileButton.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        jFileButton.setText("Selecionar arquivo");
+        jFileButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jFileButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jFileButtonMouseClicked(evt);
+            }
+        });
+
+        jFileLabel.setText("Caminho do arquivo: Nenhum arquivo selecionado");
+
+        javax.swing.GroupLayout jFilePanelLayout = new javax.swing.GroupLayout(jFilePanel);
+        jFilePanel.setLayout(jFilePanelLayout);
+        jFilePanelLayout.setHorizontalGroup(
+            jFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jFileButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jFilePanelLayout.createSequentialGroup()
+                .addComponent(jFileLabel)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jFilePanelLayout.setVerticalGroup(
+            jFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jFilePanelLayout.createSequentialGroup()
+                .addComponent(jFileLabel)
+                .addGap(5, 5, 5)
+                .addComponent(jFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
+        );
+
+        jCleanDataButton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jCleanDataButton.setText("Limpar dados");
+        jCleanDataButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jCleanDataButton.setPreferredSize(new java.awt.Dimension(100, 35));
+        jCleanDataButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jCleanDataButtonMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jButtonsLayout = new javax.swing.GroupLayout(jButtons);
+        jButtons.setLayout(jButtonsLayout);
+        jButtonsLayout.setHorizontalGroup(
+            jButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jButtonsLayout.createSequentialGroup()
+                .addContainerGap(558, Short.MAX_VALUE)
+                .addComponent(jCleanDataButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
+        );
+        jButtonsLayout.setVerticalGroup(
+            jButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jButtonsLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jCleanDataButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        jResult.setEditable(false);
+        jResult.setColumns(20);
+        jResult.setRows(5);
+        jScrollResultPane.setViewportView(jResult);
+
+        javax.swing.GroupLayout jResultPanelLayout = new javax.swing.GroupLayout(jResultPanel);
+        jResultPanel.setLayout(jResultPanelLayout);
+        jResultPanelLayout.setHorizontalGroup(
+            jResultPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jResultPanelLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(jScrollResultPane)
+                .addGap(0, 0, 0))
+        );
+        jResultPanelLayout.setVerticalGroup(
+            jResultPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jResultPanelLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(jScrollResultPane))
+        );
+
+        jResultTablePanel.setPreferredSize(new java.awt.Dimension(698, 176));
+
+        jScrollResultTablePanel.setPreferredSize(new java.awt.Dimension(452, 176));
+
+        jResultTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollResultTablePanel.setViewportView(jResultTable);
+
+        javax.swing.GroupLayout jResultTablePanelLayout = new javax.swing.GroupLayout(jResultTablePanel);
+        jResultTablePanel.setLayout(jResultTablePanelLayout);
+        jResultTablePanelLayout.setHorizontalGroup(
+            jResultTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollResultTablePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jResultTablePanelLayout.setVerticalGroup(
+            jResultTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollResultTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jMainLayout = new javax.swing.GroupLayout(jMain);
+        jMain.setLayout(jMainLayout);
+        jMainLayout.setHorizontalGroup(
+            jMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jMainLayout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addGroup(jMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jFilePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jResultTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtons, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jResultPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(30, 30, 30))
+        );
+        jMainLayout.setVerticalGroup(
+            jMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jMainLayout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addComponent(jFilePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(jButtons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40)
+                .addComponent(jResultPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(40, 40, 40)
+                .addComponent(jResultTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                .addGap(30, 30, 30))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 648, Short.MAX_VALUE)
+            .addComponent(jMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 395, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void jFileButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jFileButtonMouseClicked
+        chooseFile();
+    }//GEN-LAST:event_jFileButtonMouseClicked
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MainView().setVisible(true);
-            }
-        });
-    }
+    private void jCleanDataButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCleanDataButtonMouseClicked
+        resetInteractions();
+    }//GEN-LAST:event_jCleanDataButtonMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jButtons;
+    private javax.swing.JButton jCleanDataButton;
+    private javax.swing.JButton jFileButton;
+    private javax.swing.JLabel jFileLabel;
+    private javax.swing.JPanel jFilePanel;
+    private javax.swing.JPanel jMain;
+    private javax.swing.JTextArea jResult;
+    private javax.swing.JPanel jResultPanel;
+    private javax.swing.JTable jResultTable;
+    private javax.swing.JPanel jResultTablePanel;
+    private javax.swing.JScrollPane jScrollResultPane;
+    private javax.swing.JScrollPane jScrollResultTablePanel;
     // End of variables declaration//GEN-END:variables
 }
