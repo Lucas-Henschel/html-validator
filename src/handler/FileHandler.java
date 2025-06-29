@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package handler;
 
 import controller.ResultFileController;
@@ -20,10 +16,14 @@ import utils.RestoreOriginalStackUtil;
 import utils.TagsUtil;
 
 /**
- *
- * @author lucas
+ * Classe responsável por ler arquivos e extrair as tags HTML,
+ * armazenando-as em uma pilha para posterior processamento.
  */
 public class FileHandler {
+
+    /**
+     * Instância singleton de {@code FileHandler}.
+     */
     public static FileHandler fileHandler;
     
     private final PilhaLista<String> allTags = new PilhaLista<>();
@@ -36,25 +36,33 @@ public class FileHandler {
         if (fileHandler == null) {
             fileHandler = new FileHandler();
         }
-        
         return fileHandler;
     }
-    
+
+    /**
+     * Limpa a pilha, removendo todos os elementos armazenados.
+     */
     public void resetInteractions() {
         allTags.liberar();
         tagsApproved.liberar();
         tagsRepproved.liberar();
     }
-    
+
+    /**
+     * Lê o conteúdo de um arquivo, extrai todas as tags HTML e empilha cada uma delas.
+     * Após a extração, envia os dados para os controladores de exibição de resultado e tabela.
+     *
+     * @param file arquivo a ser lido e processado
+     */
     public void treatFile(File file) {
         resetInteractions();
-        
+
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
 
             while ((line = reader.readLine()) != null) {
                 Matcher matcher = pattern.matcher(line);
-                
+
                 while (matcher.find()) {
                     String rawTag = matcher.group();
                     String tagName = TagsUtil.getTagName(rawTag);

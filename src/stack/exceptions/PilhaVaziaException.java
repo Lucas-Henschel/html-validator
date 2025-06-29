@@ -4,16 +4,21 @@
  */
 package stack.exceptions;
 
+/**
+ * Exceção personalizada lançada quando uma pilha está vazia.
+ */
 public class PilhaVaziaException extends RuntimeException {
 
+    /**
+     * Construtor padrão da exceção.
+     */
     public PilhaVaziaException() {
     }
 
     /**
-     * Constructs an instance of <code>PilhaVaziaException</code> with the
-     * specified detail message.
+     * Construtor da exceção com mensagem personalizada.
      *
-     * @param msg the detail message.
+     * @param msg mensagem descritiva do erro
      */
     public PilhaVaziaException(String msg) {
         super(msg);

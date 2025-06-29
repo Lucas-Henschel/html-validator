@@ -4,16 +4,21 @@
  */
 package stack.exceptions;
 
+/**
+ * Exceção personalizada lançada quando uma pilha está cheia.
+ */
 public class PilhaCheiaException extends RuntimeException {
 
+    /**
+     * Construtor padrão da exceção.
+     */
     public PilhaCheiaException() {
     }
 
     /**
-     * Constructs an instance of <code>PilhaCheiaException</code> with the
-     * specified detail message.
+     * Construtor da exceção com mensagem personalizada.
      *
-     * @param msg the detail message.
+     * @param msg mensagem descritiva do erro
      */
     public PilhaCheiaException(String msg) {
         super(msg);
