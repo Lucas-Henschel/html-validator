@@ -4,6 +4,7 @@
  */
 package controller;
 
+import enums.SingletonTagEnum;
 import enums.TagEnum;
 import handler.FileHandler;
 import javax.swing.JPanel;
@@ -13,7 +14,7 @@ import scatterMap.main.MapaDispersao;
 import scatterMap.model.NoMapa;
 import stack.main.PilhaLista;
 import utils.RestoreOriginalStackUtil;
-import utils.StartTagsUtil;
+import utils.TagsUtil;
 
 /**
  * Controlador responsável por processar as tags do arquivo
@@ -35,11 +36,9 @@ public class TableFileController {
      * Estrutura para armazenar as tags e suas contagens.
      */
     private MapaDispersao<String> tagMap;
-
-    /**
-     * Array contendo as tags de início encontradas.
-     */
-    private String[] startTags;
+    
+    private PilhaLista<String> stack = new PilhaLista<>();
+    private PilhaLista<String> tempStack = new PilhaLista<>();
 
     /**
      * Tabela de resultados exibida na interface.
@@ -75,7 +74,6 @@ public class TableFileController {
      */
     public void resetInteractions() {
         this.tagMap = new MapaDispersao<>(0);
-        this.startTags = new String[0];
         jTableResultPanel.setVisible(false);
     }
 
@@ -86,28 +84,25 @@ public class TableFileController {
     public void treatTableFile() {
         jTableResultPanel.setVisible(true);
 
-        PilhaLista<String> stack = fileHandler.getStack();
-        PilhaLista<String> tempStack = new PilhaLista<>();
+        stack = fileHandler.getTagsApproved();        
+        tempStack = new PilhaLista<>();
+        
+        countTags();
 
-        countTags(stack, tempStack);
         RestoreOriginalStackUtil.restoreOriginalStack(stack, tempStack);
 
         DefaultTableModel tableModel = buildTableModel();
         updateResultTable(tableModel);
     }
-
     /**
      * Conta a ocorrência de tags de início na pilha de dados.
      *
      * @param stack pilha original com os dados
      * @param tempStack pilha temporária utilizada para restauração
      */
-    private void countTags(PilhaLista<String> stack, PilhaLista<String> tempStack) {
-        int quantityStartTags = StartTagsUtil.countStartTags(stack);
+    private void countTags() {
+        int quantityStartTags = stack.getListaEncadeada().obterComprimento();
         this.tagMap = new MapaDispersao<>(quantityStartTags);
-        this.startTags = new String[quantityStartTags];
-
-        int count = 0;
 
         while (!stack.estaVazia()) {
             String tag = stack.pop();
@@ -121,8 +116,6 @@ public class TableFileController {
                     no.addCount();
                 } else {
                     this.tagMap.inserir(key, tag);
-                    this.startTags[count] = tag;
-                    count++;
                 }
             }
         }
@@ -134,22 +127,44 @@ public class TableFileController {
      * @return {@code DefaultTableModel} com os dados processados
      */
     private DefaultTableModel buildTableModel() {
-        DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel model = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
         model.addColumn("Tag");
         model.addColumn("Número de ocorrências");
+        
+        tempStack = new PilhaLista<>();
+        
+        RestoreOriginalStackUtil.restoreOriginalStack(tempStack, fileHandler.getAllTags());
+        
+        while(!tempStack.estaVazia()) {
+            String tag = tempStack.pop();
+            fileHandler.getAllTags().push(tag);
+            
+            if (!TagsUtil.isTagExist(fileHandler.getTagsApproved(), tag)) continue;
+            
+            if (TagEnum.START_TAG.isStartTag(tag) || SingletonTagEnum.isSingleton(tag)) {
+                if (!TagsUtil.isTagExist(tempStack, tag)) {
+                    int key = tag.hashCode();
 
-        for (int i = this.startTags.length - 1; i >= 0; i--) {
-            if (this.startTags[i] == null) continue;
+                    NoMapa<String> node = tagMap.buscar(key);
 
-            int key = this.startTags[i].hashCode();
-            NoMapa<String> no = this.tagMap.buscar(key);
-
-            model.addRow(new Object[]{
-                " " + no.getInfo(),
-                no.getCount()
-            });
+                    model.addRow(
+                        new Object[]{
+                            " " + node.getInfo(), 
+                            node.getCount()
+                        }
+                    );
+                }
+            }
         }
-
+        
+        RestoreOriginalStackUtil.restoreOriginalStack(stack, tempStack);
+                
         return model;
     }
 
@@ -159,6 +174,7 @@ public class TableFileController {
      * @param model modelo da tabela contendo as tags e suas contagens
      */
     private void updateResultTable(DefaultTableModel model) {
+        jResultTable.getTableHeader().setReorderingAllowed(false);
         jResultTable.setRowHeight(35);
         jResultTable.setModel(model);
         jResultTable.setVisible(false);

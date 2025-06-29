@@ -2,6 +2,8 @@ package handler;
 
 import controller.ResultFileController;
 import controller.TableFileController;
+import enums.SingletonTagEnum;
+import enums.TagEnum;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -10,6 +12,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import stack.main.PilhaLista;
+import utils.RestoreOriginalStackUtil;
+import utils.TagsUtil;
 
 /**
  * Classe responsável por ler arquivos e extrair as tags HTML,
@@ -21,17 +25,13 @@ public class FileHandler {
      * Instância singleton de {@code FileHandler}.
      */
     public static FileHandler fileHandler;
-
-    /**
-     * Pilha que armazena as tags HTML extraídas do arquivo.
-     */
-    private final PilhaLista<String> stack = new PilhaLista<>();
-
-    /**
-     * Retorna a instância singleton de {@code FileHandler}.
-     *
-     * @return instância de {@code FileHandler}
-     */
+    
+    private final PilhaLista<String> allTags = new PilhaLista<>();
+    private final PilhaLista<String> tagsApproved = new PilhaLista<>();
+    private final PilhaLista<String> tagsRepproved = new PilhaLista<>();
+    
+    private final Pattern pattern = Pattern.compile("<[^>]+>");
+    
     public static FileHandler getFileHandler() {
         if (fileHandler == null) {
             fileHandler = new FileHandler();
@@ -43,7 +43,9 @@ public class FileHandler {
      * Limpa a pilha, removendo todos os elementos armazenados.
      */
     public void resetInteractions() {
-        stack.liberar();
+        allTags.liberar();
+        tagsApproved.liberar();
+        tagsRepproved.liberar();
     }
 
     /**
@@ -59,28 +61,92 @@ public class FileHandler {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                Pattern pattern = Pattern.compile("<[^>]+>"); // Regex para capturar tags HTML
                 Matcher matcher = pattern.matcher(line);
 
                 while (matcher.find()) {
-                    stack.push(matcher.group()); // Empilha cada tag encontrada
+                    String rawTag = matcher.group();
+                    String tagName = TagsUtil.getTagName(rawTag);
+                    String normalized;
+                    
+                    if (TagEnum.END_TAG.isEndTag(rawTag)) {
+                        normalized = "</" + tagName + ">";
+                    } else if (SingletonTagEnum.isSingleton(rawTag)) {
+                        normalized = "<" + tagName + ">";
+                    } else {
+                        normalized = "<" + tagName + ">";
+                    }
+                    
+                    allTags.push(normalized);
                 }
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Erro ao ler o arquivo", "Erro", JOptionPane.ERROR_MESSAGE);
         }
-
-        // Atualiza as interfaces com os dados extraídos
+        
+        handleHtmlTags();
+        
         ResultFileController.getResultFileController().treatResultFile();
-        TableFileController.getTableFileController().treatTableFile();
+        
+        if (getTagsRepproved().estaVazia()) {
+            TableFileController.getTableFileController().treatTableFile();
+        }
+    }
+    
+    private void handleHtmlTags() {
+        tagsApproved.liberar();
+        tagsRepproved.liberar();
+
+        PilhaLista<String> tempStack = new PilhaLista<>();
+        PilhaLista<String> openTags = new PilhaLista<>();
+        PilhaLista<String> aprovadasTemp = new PilhaLista<>();
+
+        RestoreOriginalStackUtil.restoreOriginalStack(tempStack, allTags);
+
+        while (!tempStack.estaVazia()) {
+            String tag = tempStack.pop();
+            allTags.push(tag);
+
+            if (SingletonTagEnum.isSingleton(tag)) {
+                aprovadasTemp.push(tag);
+            } else if (TagEnum.START_TAG.isStartTag(tag)) {
+                openTags.push(tag);
+            } else {
+                if (openTags.estaVazia()) {
+                    tagsRepproved.push(tag);
+                    continue;
+                }
+
+                String lastOpen = openTags.peek();
+                String closeName = TagsUtil.getTagName(tag);
+                String openName = TagsUtil.getTagName(lastOpen);
+
+                if (openName.equalsIgnoreCase(closeName)) {
+                    openTags.pop();
+                    aprovadasTemp.push(tag);
+                    aprovadasTemp.push(lastOpen);
+                } else {
+                    tagsRepproved.push(tag);
+                    tagsRepproved.push(openTags.pop());
+                }
+            }
+        }
+
+        while (!openTags.estaVazia()) {
+            tagsRepproved.push(openTags.pop());
+        }
+        
+        RestoreOriginalStackUtil.restoreOriginalStack(tagsApproved, aprovadasTemp);
+    }
+   
+    public PilhaLista<String> getAllTags() {
+        return allTags;
     }
 
-    /**
-     * Retorna a pilha contendo as tags HTML extraídas.
-     *
-     * @return pilha de tags HTML
-     */
-    public PilhaLista<String> getStack() {
-        return stack;
+    public PilhaLista<String> getTagsApproved() {
+        return tagsApproved;
+    }
+
+    public PilhaLista<String> getTagsRepproved() {
+        return tagsRepproved;
     }
 }

@@ -36,7 +36,7 @@ public class MapaDispersao<T> {
      * @return índice correspondente na tabela hash
      */
     private int calcularHash(int chave) {
-        return chave % info.length;
+        return Math.floorMod(chave, info.length);
     }
 
     /**

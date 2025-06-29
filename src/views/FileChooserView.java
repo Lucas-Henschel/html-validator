@@ -5,6 +5,7 @@
 package views;
 
 import controller.FileController;
+import java.io.File;
 
 /**
  * Interface gráfica para seleção de arquivos, integrada com FileController para tratamento da escolha do usuário.
