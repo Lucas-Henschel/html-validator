@@ -32,6 +32,8 @@ public class FileHandler {
     
     private final Pattern pattern = Pattern.compile("<[^>]+>");
     
+    private StringBuilder sbError = new StringBuilder();
+    
     public static FileHandler getFileHandler() {
         if (fileHandler == null) {
             fileHandler = new FileHandler();
@@ -95,6 +97,7 @@ public class FileHandler {
     private void handleHtmlTags() {
         tagsApproved.liberar();
         tagsRepproved.liberar();
+        sbError.setLength(0);
 
         PilhaLista<String> tempStack = new PilhaLista<>();
         PilhaLista<String> openTags = new PilhaLista<>();
@@ -112,27 +115,58 @@ public class FileHandler {
                 openTags.push(tag);
             } else {
                 if (openTags.estaVazia()) {
-                    tagsRepproved.push(tag);
-                    continue;
-                }
-
-                String lastOpen = openTags.peek();
-                String closeName = TagsUtil.getTagName(tag);
-                String openName = TagsUtil.getTagName(lastOpen);
-
-                if (openName.equalsIgnoreCase(closeName)) {
-                    openTags.pop();
-                    aprovadasTemp.push(tag);
-                    aprovadasTemp.push(lastOpen);
+                    sbError.append(
+                        String.format(
+                            "Tag final inesperada: encontrado %s mas nenhuma tag estava aberta.%n",
+                            tag
+                        )
+                    );
+                    
+                    tagsRepproved.push(tag);           
                 } else {
-                    tagsRepproved.push(tag);
-                    tagsRepproved.push(openTags.pop());
+                    String lastOpen = openTags.peek();
+                    String openName = TagsUtil.getTagName(lastOpen);
+                    String closeName = TagsUtil.getTagName(tag);
+
+                    if (openName.equalsIgnoreCase(closeName)) {
+                        openTags.pop();
+                        aprovadasTemp.push(tag);
+                        aprovadasTemp.push(lastOpen);
+                    } else {
+                        sbError.append(
+                            String.format(
+                                "Falta tag final: esperava-se </%s> para fechar %s e encontrou %s.%n",
+                                openName, lastOpen, tag
+                            )
+                        );
+                        
+                        tagsRepproved.push(openTags.pop());
+
+                        sbError.append(
+                            String.format(
+                                "Tag inicial inesperada: esperava-se <%s> para abrir %s e encontrou <%s>.%n",
+                                TagsUtil.getTagName(tag), tag, openName
+                            )
+                        );
+                        
+                        tagsRepproved.push(tag);
+                    }
                 }
             }
         }
 
         while (!openTags.estaVazia()) {
-            tagsRepproved.push(openTags.pop());
+            String unclosed = openTags.pop();
+            
+            sbError.append(
+                String.format(
+                    "Falta tag final: esperava-se </%s> para fechar %s.\n", 
+                    TagsUtil.getTagName(unclosed),
+                    unclosed
+                )
+            );
+            
+            tagsRepproved.push(unclosed);
         }
         
         RestoreOriginalStackUtil.restoreOriginalStack(tagsApproved, aprovadasTemp);
@@ -148,5 +182,9 @@ public class FileHandler {
 
     public PilhaLista<String> getTagsRepproved() {
         return tagsRepproved;
+    }
+
+    public StringBuilder getSbError() {
+        return sbError;
     }
 }
