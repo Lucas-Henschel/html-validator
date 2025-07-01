@@ -66,15 +66,7 @@ public class ResultFileController {
      */
     public void treatResultFile() {
         jResultPanel.setVisible(true);
-        //jResult.setText(buildResultFile());
-        
-        jResult.setText(
-            "ALL TAGS: " + fileHandler.getAllTags() + "\n" +
-            "APROVADOS: " + fileHandler.getTagsApproved() + "\n" + 
-            "REPROVADOS: " + fileHandler.getTagsRepproved() + "\n"
-        );
-        
-        jResult.setText(jResult.getText() + "\n\n" + fileHandler.getSbError().toString());
+        jResult.setText(buildResultFile());
     }
     
     private String buildResultFile() {
