@@ -123,29 +123,47 @@ public class FileHandler {
                     );
                     
                     tagsRepproved.push(tag);           
-                } else {
-                    String lastOpen = openTags.peek();
-                    String openName = TagsUtil.getTagName(lastOpen);
+            } else {
                     String closeName = TagsUtil.getTagName(tag);
+                    PilhaLista<String> buffer = new PilhaLista<>();
+                    boolean foundMatch = false;
 
-                    if (openName.equalsIgnoreCase(closeName)) {
-                        openTags.pop();
-                        aprovadasTemp.push(tag);
-                        aprovadasTemp.push(lastOpen);
+                    while (!openTags.estaVazia()) {
+                        String openTag = openTags.pop();
+                        buffer.push(openTag);
+
+                        if (TagsUtil.getTagName(openTag).equalsIgnoreCase(closeName)) {
+                            buffer.pop();
+                            aprovadasTemp.push(tag);
+                            aprovadasTemp.push(openTag);
+                            
+                            foundMatch = true;
+                            break;
+                        }
+                    }
+
+                    if (foundMatch) {
+                        while (!buffer.estaVazia()) {
+                            String unclosed = buffer.pop();
+                            
+                            sbError.append(
+                                String.format(
+                                    "Falta tag final: esperava‑se </%s> para fechar %s.%n",
+                                    TagsUtil.getTagName(unclosed), unclosed
+                                )
+                            );
+                            
+                            tagsRepproved.push(unclosed);
+                        }
                     } else {
-                        sbError.append(
-                            String.format(
-                                "Falta tag final: esperava-se </%s> para fechar %s e encontrou %s.%n",
-                                openName, lastOpen, tag
-                            )
-                        );
+                        while (!buffer.estaVazia()) {
+                            openTags.push(buffer.pop());
+                        }
                         
-                        tagsRepproved.push(openTags.pop());
-
                         sbError.append(
                             String.format(
-                                "Tag inicial inesperada: esperava-se <%s> para abrir %s e encontrou <%s>.%n",
-                                TagsUtil.getTagName(tag), tag, openName
+                                "Tag final inesperada: encontrado %s mas nenhuma <%s> estava aberta.%n",
+                                tag, closeName
                             )
                         );
                         
