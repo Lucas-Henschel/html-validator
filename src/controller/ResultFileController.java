@@ -75,9 +75,10 @@ public class ResultFileController {
         if (fileHandler.getAllTags().estaVazia()) {
             sb.append("Nenhuma tag HTML foi encontrada no arquivo.");
         } else if (fileHandler.getTagsRepproved().estaVazia()) {
-             sb.append("O arquivo está bem formatado.");
+            sb.append("O arquivo está bem formatado.");
         } else {
-            sb.append("O arquivo não esta bem formatado.");
+            sb.append("O arquivo não esta bem formatado.\n\n");
+            sb.append(fileHandler.getSbError().toString());
         }
         
         return sb.toString();
