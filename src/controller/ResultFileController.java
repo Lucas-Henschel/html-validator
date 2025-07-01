@@ -66,7 +66,15 @@ public class ResultFileController {
      */
     public void treatResultFile() {
         jResultPanel.setVisible(true);
-        jResult.setText(buildResultFile());
+        //jResult.setText(buildResultFile());
+        
+        jResult.setText(
+            "ALL TAGS: " + fileHandler.getAllTags() + "\n" +
+            "APROVADOS: " + fileHandler.getTagsApproved() + "\n" + 
+            "REPROVADOS: " + fileHandler.getTagsRepproved() + "\n"
+        );
+        
+        jResult.setText(jResult.getText() + "\n\n" + fileHandler.getSbError().toString());
     }
     
     private String buildResultFile() {
@@ -75,9 +83,10 @@ public class ResultFileController {
         if (fileHandler.getAllTags().estaVazia()) {
             sb.append("Nenhuma tag HTML foi encontrada no arquivo.");
         } else if (fileHandler.getTagsRepproved().estaVazia()) {
-             sb.append("O arquivo está bem formatado.");
+            sb.append("O arquivo está bem formatado.");
         } else {
-            sb.append("O arquivo não esta bem formatado.");
+            sb.append("O arquivo não esta bem formatado.\n\n");
+            sb.append(fileHandler.getSbError().toString());
         }
         
         return sb.toString();
